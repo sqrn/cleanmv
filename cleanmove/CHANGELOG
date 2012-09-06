@@ -1,0 +1,15 @@
+2012-02-22
+Numer wersji: 0.2
+1. Dodano rekursywne tworzenie katalogow wzgledem odczytanej linii w pliku
+2. Plik bedzie przeniesiony do katalogu rekursywnie utworzonego, a nie do
+bezposredno do folderu backup
+
+2012-02-20
+Numer wersji: 0.1
+1. Odczytuje katalog i wskazany plik w katalogu
+2. Tworzy folder backup
+3. Przenosi (nie kopiuje!) pliki odczytane ze wskazanego pliku do folderu
+backup
+4. Zlicza liczbe odczytanych lini - liczba plikow do skopiowania
+5. Zlicza liczbe plikow skopiowanych.
+

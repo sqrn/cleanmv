@@ -1,0 +1,107 @@
+#!/usr/bin/python
+"""
+CleanMV v1.0
+Kopiuje pliki podane w pliku <file> do katalogu backup.
+Mariusz Skora <m.skora@gmail.com>
+"""
+
+import os
+import sys
+
+from cleanmove.cleanmv import CleanMV
+
+try:
+    import getopt
+except ImportError:
+    print "Error: Brak modulu getopt!"
+    sys.exit()
+
+def usage():
+    print "PROGRAM NIC NIE KOPIUJE. OPERACJE POLEGAJA NA PRZENOSZENIU!"
+    print "Program przyjmuje dwa parametry <directory> oraz <file>, gdzie:"
+    print "1. <directory> to katalog gdzie skrypt szuka <file>"
+    print "2. Jezeli <file> zostanie odnaleziony:"
+    print "a). Dla kazdej lini w <file> rekursywnie zostana utworzone katalogi"
+    print "b). Utworzony zostanie folder '<directory>/backup'"
+    print "c). Pliki i katalogi dla kazdej lini <file> beda przenoszone rekursywnie"
+    print "do katalogu '<directory>/backup'."
+    print "3. Jezeli skrypt nie bedzie mogl przeniesc pliku"
+    print "uzytkownik zostanie o tym poinformowany"
+    print "4. Mozliwe punkty wyjscia z programu to:"
+    print "a). Jezeli <file> nie znajduje sie w <directory>"
+    print "b). Jezeli <directory> nie istnieje lub nie jest katalogiem"
+    print "\n\n"
+    print "./cleammv -d, --directory <katalog>"
+    print "./cleanmv -f, --file <nazwa_pliku_z_danymi>"
+    print "./cleanmv -v \t\t\t\t\t Drukuj przenoszone sciezki do plikow"
+    print "./cleanmv -V, --version"
+    print "\n\nExample:"
+    print "./cleanmv -v -d <katalog> -f <plik_z_danymi>"
+
+def version():
+    print "Mariusz Skora <m.skora@gmail.com>"
+    print "CleanMV v0.2"
+
+def main():
+    directory = None
+    datafile = None
+    verbose = False
+    backupdir = None
+
+    try:
+        opts, args = getopt.getopt(
+                sys.argv[1:], "hd:f:vV", ["help",
+                    "directory=","file=","version"]
+        )
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+        sys.exit(2)
+
+    for o, a in opts:
+        if o == "-v":
+            verbose = True
+        elif o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif o in ("-V", "--version"):
+            version()
+            sys.exit()
+        elif o in ("-o", "--output"):
+            output = a
+
+        elif o in ("-d", "--directory"):
+            if os.path.isdir(a) is False:
+                print "%s nie jest katalogiem!" % a
+                sys.exit(2)
+            else:
+                directory = a
+
+        elif o in ("-f", "--file"):
+            if directory is not None:
+                if a in os.listdir(directory):
+                    datafile = a
+                else:
+                    print "%s nie istnieje w katalogu %s" % (
+                            a, directory)
+                    sys.exit(2)
+            else:
+                print "Brak wskazanego katalogu!"
+                sys.exit(2)
+        else:
+            assert False, "nieznana opcja"
+            usage()
+
+        if directory is not None and datafile is not None:
+            clnmv = CleanMV(directory, datafile)
+            if verbose:
+                clnmv.setVerbose(True)
+            clnmv.move()
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
